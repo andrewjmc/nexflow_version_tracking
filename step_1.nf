@@ -4,9 +4,10 @@ process step_1 {
 
   input:
   file(file_in) from files_in
+  val(commit) from "git log -n 1 --pretty=format:%H -- ${task.process}.sh".execute().text
 
   output:
-  file("*_processed.txt") into step_1_output
+  file("*_processed.${commit}.txt") into step_1_output
 
   script:
   """
