@@ -69,8 +69,8 @@ process step_2_code {
   storeDir 'results/step_2/code'
 
   input:
-    val(version) from step_2_version
-    val(prior_versions) from step_2_cumulative_versions_dup
+    val(version) from step_2_version.first()
+    val(prior_versions) from step_1_cumulative_versions_dup
     path "step_2.${version}.nf" from "${workflow.projectDir}/step_2.nf"
     file(prior_code) from step_1_code
 
@@ -83,3 +83,5 @@ process step_2_code {
     cat $prior_code step_2.${version}.sh > cumulative_code.${prior_versions}-${version}.sh
   """
 }
+
+
