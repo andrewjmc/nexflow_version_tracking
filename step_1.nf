@@ -29,6 +29,7 @@ process step_1_code {
     val(version) from step_1_version
     path(code) from "${workflow.projectDir}/step_1.nf"
     val(process_name) from "step_1"
+    val(prior_code) from ""
 
   output:
     path("step_1.${version}.nf") into step_1_code
