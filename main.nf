@@ -1,6 +1,9 @@
 #!/usr/bin/env nextflow
 
-Channel.fromPath( "$params.inputDir/*.txt" ).set{ files_in }
+Channel
+  .fromPath( "$params.inputDir/*.txt" )
+  .map{ [it.baseName, it] }
+  .set{ files_in }
 
 i=0
 commits="./get_git_commits.sh".execute().text.tokenize("\n").reverse().collectEntries{ [it, ++i] }
@@ -10,11 +13,11 @@ process step_1 {
   storeDir 'results/step_1'
 
   input:
-    file(file_in) from files_in
+    val(sample), file(file_in) from files_in
     val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_1.nf".execute().text]
 
   output:
-    file("${file_in.baseName}_processed.${version}.txt") into step_1_output
+    tuple val(sample), file("${file_in.baseName}_processed.${version}.txt") into step_1_output
     val(version) into s1v
 
   script:
@@ -50,12 +53,12 @@ process step_2 {
   storeDir 'results/step_2'
 
   input:
-    file(file_in) from step_1_output
+    tuple val(sample), file(file_in) from step_1_output
     val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_2.nf".execute().text]
     val(prior_versions) from step_1_version
 
   output:
-    file("*_processed.${prior_versions}-${version}.txt") into step_2_output
+    file("${sample}_processed.${prior_versions}-${version}.txt") into step_2_output
     val(version) into s2v
 
   script:

@@ -3,12 +3,12 @@ process step_2 {
   storeDir 'results/step_2'
 
   input:
-    file(file_in) from step_1_output
+    tuple val(sample), file(file_in) from step_1_output
     val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_2.nf".execute().text]
     val(prior_versions) from step_1_version
 
   output:
-    file("*_processed.${prior_versions}-${version}.txt") into step_2_output
+    file("${sample}_processed.${prior_versions}-${version}.txt") into step_2_output
     val(version) into s2v
 
   script:
