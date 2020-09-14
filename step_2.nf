@@ -36,7 +36,7 @@ process step_2_code {
 
   script:
   """
-    cat $prior_code step_2.${version}.sh > cumulative_code.${prior_versions}-${version}.sh
+    cat $prior_code step_2.${version}.nf > cumulative_code.${prior_versions}-${version}.sh
   """
 }
 
