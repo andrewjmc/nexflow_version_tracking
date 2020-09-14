@@ -45,4 +45,4 @@ process step_2_code {
 step_1_cumulative_versions_dup2
   .merge(step_2_version_dup)
   .map{ it[0] + '-' + it[1] }
-  .into{ step_2_cumulative_versions }
+  .set{ step_2_cumulative_versions }
