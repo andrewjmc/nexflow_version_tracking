@@ -8,7 +8,7 @@ process step_1 {
 
   output:
     file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-    val(version) into step_1_version
+    val(version) into s1v
 
   script:
   """
@@ -18,9 +18,9 @@ process step_1 {
 
 }
 
-/*s1v
+s1v
   .first()
-  .set{ step_1_version }*/
+  .set{ step_1_version }
 
 process step_1_code {
   storeDir 'results/step_1/code'

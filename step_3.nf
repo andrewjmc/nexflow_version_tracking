@@ -48,5 +48,4 @@ process step_3_code {
 step_2_cumulative_versions
   .merge(step_3_version)
   .map{ it[0] + '-' + it[1] }
-  .first()
   .set{ step_3_cumulative_versions }

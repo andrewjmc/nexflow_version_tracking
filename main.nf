@@ -15,7 +15,7 @@ process step_1 {
 
   output:
     file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-    val(version) into step_1_version
+    val(version) into s1v
 
   script:
   """
@@ -25,9 +25,9 @@ process step_1 {
 
 }
 
-/*s1v
+s1v
   .first()
-  .set{ step_1_version }*/
+  .set{ step_1_version }
 
 process step_1_code {
   storeDir 'results/step_1/code'
@@ -95,7 +95,6 @@ process step_2_code {
 step_1_version
   .merge(step_2_version)
   .map{ it[0] + '-' + it[1] }
-  .first()
   .set{ step_2_cumulative_versions }
 process step_3 {
 
@@ -147,5 +146,4 @@ process step_3_code {
 step_2_cumulative_versions
   .merge(step_3_version)
   .map{ it[0] + '-' + it[1] }
-  .first()
   .set{ step_3_cumulative_versions }
