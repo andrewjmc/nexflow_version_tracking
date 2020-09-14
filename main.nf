@@ -87,7 +87,7 @@ process step_2_code {
 }
 
 step_1_cumulative_versions_dup2
-  .merge(step_2_version)
+  .merge(step_2_version_dup)
   .map{ it[0] + '-' + it[1] }
   .set( step_2_cumulative_versions )
 process step_3 {
@@ -135,6 +135,6 @@ process step_3_code {
 }
 
 step_2_cumulative_versions_dup2
-  .merge(step_3_version)
+  .merge(step_3_version_dup)
   .map{ it[0] + '-' + it[1] }
   .set( step_3_cumulative_versions )
