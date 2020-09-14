@@ -31,7 +31,7 @@ process step_3_code {
     file(prior_code) from step_2_cumulative_code
 
   output:
-    path("step_3.${version}.nf", includeInputs: true) into step_3_code
+    path("step_3.${version}.nf", includeInputs: true, followLinks: true) into step_3_code
     path("cumulative_code.${prior_versions}-${version}.nf") into step_3_cumulative_code
     val(version) into step_3_version_dup
     val(prior_versions) into step_2_cumulative_versions_dup2

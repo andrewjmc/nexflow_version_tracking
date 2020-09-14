@@ -33,7 +33,7 @@ process step_1_code {
     path "step_1.${version}.nf" from "${workflow.projectDir}/step_1.nf"
 
   output:
-    path("*.${version}.nf", includeInputs: true) into step_1_code
+    path("*.${version}.nf", includeInputs: true, followLinks: true) into step_1_code
     val(version) into step_1_cumulative_versions
 
   script:
@@ -75,7 +75,7 @@ process step_2_code {
     file(prior_code) from step_1_code
 
   output:
-    path("step_2.${version}.nf", includeInputs: true) into step_2_code
+    path("step_2.${version}.nf", includeInputs: true, followLinks: true) into step_2_code
     path("cumulative_code.${prior_versions}-${version}.nf") into step_2_cumulative_code
     val(version) into step_2_version_dup
     val(prior_versions) into step_1_cumulative_versions_dup2
@@ -123,7 +123,7 @@ process step_3_code {
     file(prior_code) from step_2_cumulative_code
 
   output:
-    path("step_3.${version}.nf", includeInputs: true) into step_3_code
+    path("step_3.${version}.nf", includeInputs: true, followLinks: true) into step_3_code
     path("cumulative_code.${prior_versions}-${version}.nf") into step_3_cumulative_code
     val(version) into step_3_version_dup
     val(prior_versions) into step_2_cumulative_versions_dup2

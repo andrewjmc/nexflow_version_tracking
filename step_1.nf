@@ -26,7 +26,7 @@ process step_1_code {
     path "step_1.${version}.nf" from "${workflow.projectDir}/step_1.nf"
 
   output:
-    path("*.${version}.nf", includeInputs: true) into step_1_code
+    path("*.${version}.nf", includeInputs: true, followLinks: true) into step_1_code
     val(version) into step_1_cumulative_versions
 
   script:
