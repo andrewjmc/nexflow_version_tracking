@@ -8,7 +8,7 @@ process step_1 {
 
   output:
     file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-    val(version) into (step_1_version, step_1_cumulative_versions)
+    val(version) into step_1_version
 
   script:
   """
@@ -22,11 +22,12 @@ process step_1_code {
   storeDir 'results/step_1/code'
 
   input:
-    val(version) from step_1_version
+    val(version) from step_1_version.first()
     path "step_1.${version}.nf" from "${workflow.projectDir}/step_1.nf"
 
   output:
     path("*.${version}.nf", includeInputs: true) into step_1_code
+    val(version) into step_1_cumulative_versions
 
   script:
   """
