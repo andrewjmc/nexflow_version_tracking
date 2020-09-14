@@ -8,7 +8,7 @@ process step_1 {
 
   output:
     file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-    val(version) into step_1_version
+    val(version) into s1v
 
   script:
   """
@@ -18,20 +18,23 @@ process step_1 {
 
 }
 
+s1v
+  .first()
+  .set{ step_1_version }
+
 process step_1_code {
   storeDir 'results/step_1/code'
 
   input:
-    val(version) from step_1_version.first()
-    path "step_1.${version}.nf" from "${workflow.projectDir}/step_1.nf"
+    val(version) from step_1_version
+    path(code) from "${workflow.projectDir}/step_1.nf"
 
   output:
-    path("*.${version}.nf", includeInputs: true, followLinks: true) into step_1_code
-    val(version) into step_1_cumulative_versions
+    path("step_1.${version}.nf") into step_1_code
 
   script:
   """
-    l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f1`
-    sed -i -n "1,\${l}p" *.nf
+    l=`grep -n "^[}]\$" $code | head -n1 | cut -d: -f1`
+    sed -n "1,\${l}p" $code > step_1.${version}.nf
   """
 }

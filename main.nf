@@ -15,7 +15,7 @@ process step_1 {
 
   output:
     file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-    val(version) into step_1_version
+    val(version) into s1v
 
   script:
   """
@@ -25,21 +25,24 @@ process step_1 {
 
 }
 
+s1v
+  .first()
+  .set{ step_1_version }
+
 process step_1_code {
   storeDir 'results/step_1/code'
 
   input:
-    val(version) from step_1_version.first()
-    path "step_1.${version}.nf" from "${workflow.projectDir}/step_1.nf"
+    val(version) from step_1_version
+    path(code) from "${workflow.projectDir}/step_1.nf"
 
   output:
-    path("*.${version}.nf", includeInputs: true, followLinks: true) into step_1_code
-    val(version) into step_1_cumulative_versions
+    path("step_1.${version}.nf") into step_1_code
 
   script:
   """
-    l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f1`
-    sed -i -n "1,\${l}p" *.nf
+    l=`grep -n "^[}]\$" $code | head -n1 | cut -d: -f1`
+    sed -n "1,\${l}p" $code > step_1.${version}.nf
   """
 }
 process step_2 {
@@ -49,12 +52,11 @@ process step_2 {
   input:
     file(file_in) from step_1_output
     val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_2.nf".execute().text]
-    val(prior_versions) from step_1_cumulative_versions
+    val(prior_versions) from step_1_version
 
   output:
     file("*_processed.${prior_versions}-${version}.txt") into step_2_output
-    val(version) into step_2_version
-    val(prior_versions) into step_1_cumulative_versions_dup
+    val(version) into s2v
 
   script:
   """
@@ -65,30 +67,35 @@ process step_2 {
 
 }
 
+s2v
+  .first()
+  .set{ step_2_version }
+
 process step_2_code {
   storeDir 'results/step_2/code'
 
   input:
-    val(version) from step_2_version.first()
-    val(prior_versions) from step_1_cumulative_versions_dup.first()
-    path "step_2.${version}.nf" from "${workflow.projectDir}/step_2.nf"
+    val(version) from step_2_version
+    val(prior_versions) from step_1_version
+    file(code) from "${workflow.projectDir}/step_2.nf"
     file(prior_code) from step_1_code
 
   output:
-    path("step_2.${version}.nf", includeInputs: true, followLinks: true) into step_2_code
+    path("step_2.${version}.nf") into step_2_code
     path("cumulative_code.${prior_versions}-${version}.nf") into step_2_cumulative_code
-    val(version) into step_2_version_dup
-    val(prior_versions) into step_1_cumulative_versions_dup2
 
   script:
   """
+    l=`grep -n "^[}]\$" $code | head -n1 | cut -d: -f1`
+    sed -n "1,\${l}p" $code > step_2.${version}.nf
     cat $prior_code step_2.${version}.nf > cumulative_code.${prior_versions}-${version}.nf
   """
 }
 
-step_1_cumulative_versions_dup2
-  .merge(step_2_version_dup)
+step_1_version
+  .merge(step_2_version)
   .map{ it[0] + '-' + it[1] }
+  .first()
   .set{ step_2_cumulative_versions }
 process step_3 {
 
@@ -101,8 +108,7 @@ process step_3 {
 
   output:
     file("*_processed.${prior_versions}-${version}.txt") into step_3_output
-    val(version) into step_3_version
-    val(prior_versions) into step_2_cumulative_versions_dup
+    val(version) into s3v
 
   script:
   """
@@ -113,29 +119,33 @@ process step_3 {
 
 }
 
+s3v
+  .first()
+  .set{ step_3_version }
+
 process step_3_code {
   storeDir 'results/step_3/code'
 
   input:
-    val(version) from step_3_version.first()
-    val(prior_versions) from step_2_cumulative_versions_dup.first()
+    val(version) from step_3_version
+    val(prior_versions) from step_2_cumulative_versions
     file(code) from "${workflow.projectDir}/step_3.nf"
     file(prior_code) from step_2_cumulative_code
 
   output:
     path("step_3.${version}.nf") into step_3_code
     path("cumulative_code.${prior_versions}-${version}.nf") into step_3_cumulative_code
-    val(version) into step_3_version_dup
-    val(prior_versions) into step_2_cumulative_versions_dup2
 
   script:
   """
-    cp $code step_3.${version}.nf
-    cat $prior_code $code > cumulative_code.${prior_versions}-${version}.nf
+    l=`grep -n "^[}]\$" $code | head -n1 | cut -d: -f1`
+    sed -n "1,\${l}p" $code > step_3.${version}.nf
+    cat $prior_code step_3.${version}.nf > cumulative_code.${prior_versions}-${version}.nf
   """
 }
 
-step_2_cumulative_versions_dup2
-  .merge(step_3_version_dup)
+step_2_cumulative_versions
+  .merge(step_3_version)
   .map{ it[0] + '-' + it[1] }
+  .first()
   .set{ step_3_cumulative_versions }
