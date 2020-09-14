@@ -37,7 +37,7 @@ process step_1_code {
 
   script:
   """
-    l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f2`
+    l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f1`
     sed -i -n "1,\${l}p" *.nf
   """
 }
@@ -74,7 +74,7 @@ process step_2_code {
 
   script:
   """
-    l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f2`
+    l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f1`
     sed -i -n "1,\${l}p" *.nf
   """
 }
