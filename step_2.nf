@@ -3,7 +3,7 @@ process step_2 {
   storeDir 'results/step_2'
 
   input:
-  tuple val(sample), file(file_in) from step_1_output
+  file(file_in) from step_1_output
   val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_2.nf".execute().text]
 
   output:
@@ -12,6 +12,7 @@ process step_2 {
   script:
   """
   file_contents=`cat $file_in`
+  sample=`echo "$file_in" | cut -d_ -f1`
   echo "\$file_contents\nAnd some more stuff" > ${sample}_processed.${version}.txt
   """
 
