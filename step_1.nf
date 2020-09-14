@@ -3,7 +3,7 @@ process step_1 {
   storeDir 'results/step_1'
 
   input:
-    val(sample), file(file_in) from files_in
+    tuple val(sample), file(file_in) from files_in
     val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_1.nf".execute().text]
 
   output:
