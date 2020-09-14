@@ -7,7 +7,7 @@ process step_1 {
   val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_1.nf".execute().text]
 
   output:
-  tuple val($file_in.baseName), file("*_processed.${version}.txt") into step_1_output
+  tuple val($file_in.baseName), file("${file_in.baseName}_processed.${version}.txt") into step_1_output
 
   script:
   """
