@@ -16,7 +16,7 @@ process step_1 {
 
   output:
   file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-  file("*.${version}.nf") into step_1_code
+  path("*.${version}.nf", includeInputs: true) into step_1_code
 
   script:
   """
