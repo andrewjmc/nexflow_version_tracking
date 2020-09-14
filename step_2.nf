@@ -8,6 +8,7 @@ process step_2 {
 
   output:
   file("*_processed.${version}.txt") into step_2_output
+  val(version) into step_2_version
 
   script:
   """
@@ -16,4 +17,21 @@ process step_2 {
   echo "\$file_contents\nAnd some more stuff" > \${sample}_processed.${version}.txt
   """
 
+}
+
+process step_2_code {
+  storeDir 'results/step_2/code'
+
+  input:
+     val(version) from step_2_version
+     path "step_2.${version}.nf" from "${workflow.projectDir}/step_2.nf"
+
+  output:
+     path("*.${version}.nf", includeInputs: true) into step_2_code
+
+  script:
+  """
+    l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f2`
+    sed -i -n "1,${l}p" *.nf
+  """
 }
