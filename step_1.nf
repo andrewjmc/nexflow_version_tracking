@@ -5,7 +5,7 @@ process step_1 {
   input:
   file(file_in) from files_in
   val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_1.nf".execute().text]
-  file(code) from path("${workflow.projectDir}/step_1.nf")
+  path(code) from "${workflow.projectDir}/step_1.nf"
 
   output:
   file("${file_in.baseName}_processed.${version}.txt") into step_1_output
