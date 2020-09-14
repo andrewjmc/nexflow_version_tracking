@@ -3,22 +3,41 @@
 Channel.fromPath( "$params.inputDir/*.txt" ).set{ files_in }
 
 i=0
-commits="git log | grep \"^commit\" | cut -d\" \" -f2".execute().text.tokenize("\n").collectEntries{ [it, ++i] }
+commits="./get_git_commits.sh".execute().text.tokenize("\n").reverse().collectEntries{ [it, ++i] }
+
 process step_1 {
 
   storeDir 'results/step_1'
 
   input:
   file(file_in) from files_in
-  val(commit) from commits["git log -n 1 --pretty=format:%H -- ${workflow.projectDir}/step_1.nf".execute().text]
+  val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_1.nf".execute().text]
 
   output:
-  file("*_processed.${commit}.txt") into step_1_output
+  tuple val($file_in.baseName), file("*_processed.${version}.txt") into step_1_output
 
   script:
   """
   file_contents=`cat $file_in`
-  echo "$file_in: \$file_contents v2" > ${file_in.baseName}_processed.${commit}.txt
+  echo "$file_in: \$file_contents v2" > ${file_in.baseName}_processed.${version}.txt
+  """
+
+}
+process step_2 {
+
+  storeDir 'results/step_2'
+
+  input:
+  val(sample), file(file_in) from step_1_output
+  val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_2.nf".execute().text]
+
+  output:
+  file("*_processed.${version}.txt") into step_2_output
+
+  script:
+  """
+  file_contents=`cat $file_in`
+  echo "\$file_contents\nAnd some more stuff" > ${sample}_processed.${version}.txt
   """
 
 }
