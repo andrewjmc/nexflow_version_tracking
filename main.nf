@@ -15,7 +15,7 @@ process step_1 {
 
   output:
     file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-    val(version) into step_1_version, step_1_cumulative_versions
+    val(version) into (step_1_version, step_1_cumulative_versions)
 
   script:
   """
