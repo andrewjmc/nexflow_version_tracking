@@ -15,7 +15,7 @@ process step_1 {
 
   output:
     file("${file_in.baseName}_processed.${version}.txt") into step_1_output
-    val(version) into step_1_version
+    val(version) into step_1_version, step_1_cumulative_versions
 
   script:
   """
@@ -48,10 +48,12 @@ process step_2 {
   input:
   file(file_in) from step_1_output
   val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_2.nf".execute().text]
+  val(prior_versions) from step_1_cumulative_versions
 
   output:
   file("*_processed.${version}.txt") into step_2_output
   val(version) into step_2_version
+  val("${prior_verions}-$version") into step_2_cumulative_versions
 
   script:
   """
@@ -67,14 +69,20 @@ process step_2_code {
 
   input:
      val(version) from step_2_version
+     val(prior_versions) from step_2_cumulative_versions
      path "step_2.${version}.nf" from "${workflow.projectDir}/step_2.nf"
+     file(prior_code) from step_1_code
 
   output:
      path("*.${version}.nf", includeInputs: true) into step_2_code
+     path("cumulative_code.*.sh") into step_2_cumulative_code
 
   script:
   """
     l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f1`
     sed -i -n "1,\${l}p" *.nf
+
+    step_1_version=`echo "$prior_code" | grep -oP "[0-9-]+(?=[.]sh)"`
+    cast $prior_code step_2.${version}.sh > cumulative_code.${prior_versions}-${version}.sh
   """
 }
