@@ -32,13 +32,13 @@ process step_2_code {
 
   output:
     path("step_2.${version}.nf", includeInputs: true) into step_2_code
-    path("cumulative_code.${prior_versions}-${version}.sh") into step_2_cumulative_code
+    path("cumulative_code.${prior_versions}-${version}.nf") into step_2_cumulative_code
     val(version) into step_2_version_dup
     val(prior_versions) into step_1_cumulative_versions_dup2
 
   script:
   """
-    cat $prior_code step_2.${version}.nf > cumulative_code.${prior_versions}-${version}.sh
+    cat $prior_code step_2.${version}.nf > cumulative_code.${prior_versions}-${version}.nf
   """
 }
 
