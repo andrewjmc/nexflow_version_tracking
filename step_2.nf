@@ -8,7 +8,7 @@ process step_2 {
     val(prior_versions) from step_1_cumulative_versions
 
   output:
-    file("*_processed.${version}.txt") into step_2_output
+    file("*_processed.${prior_versions}-${version}.txt") into step_2_output
     val(version) into step_2_version
     val(prior_versions) into step_1_cumulative_versions_dup
 
