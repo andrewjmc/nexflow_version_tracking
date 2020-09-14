@@ -30,8 +30,8 @@ process step_3_code {
   input:
     val(version) from step_3_version
     val(prior_versions) from step_2_cumulative_versions
-    file(code) from "${workflow.projectDir}/step_3.nf"
-    file(prior_code) from step_2_cumulative_code
+    path(code) from "${workflow.projectDir}/step_3.nf"
+    path(prior_code) from step_2_cumulative_code
 
   output:
     path("step_3.${version}.nf") into step_3_code
