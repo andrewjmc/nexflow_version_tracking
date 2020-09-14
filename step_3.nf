@@ -32,17 +32,14 @@ process step_3_code {
     val(prior_versions) from step_2_cumulative_versions
     path(code) from "${workflow.projectDir}/step_3.nf"
     path(prior_code) from step_2_cumulative_code
+    val(process_name) from 'step_3'
 
   output:
     path("step_3.${version}.nf") into step_3_code
     path("cumulative_code.${prior_versions}-${version}.nf") into step_3_cumulative_code
 
   script:
-  """
-    l=`grep -n "^[}]\$" $code | head -n1 | cut -d: -f1`
-    sed -n "1,\${l}p" $code > step_3.${version}.nf
-    cat $prior_code step_3.${version}.nf > cumulative_code.${prior_versions}-${version}.nf
-  """
+    template 'nf_export_code.sh'
 }
 
 step_2_cumulative_versions

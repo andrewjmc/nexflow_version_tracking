@@ -28,13 +28,11 @@ process step_1_code {
   input:
     val(version) from step_1_version
     path(code) from "${workflow.projectDir}/step_1.nf"
+    val(process_name) from "step_1"
 
   output:
     path("step_1.${version}.nf") into step_1_code
 
   script:
-  """
-    l=`grep -n "^[}]\$" $code | head -n1 | cut -d: -f1`
-    sed -n "1,\${l}p" $code > step_1.${version}.nf
-  """
+    template 'nf_export_code.sh'
 }
