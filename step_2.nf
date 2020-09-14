@@ -33,6 +33,8 @@ process step_2_code {
   output:
     path("step_2.${version}.nf", includeInputs: true) into step_2_code
     path("cumulative_code.*.sh") into step_2_cumulative_code
+    val(version) into step_2_version_dup
+    val(prior_versions) into step_1_cumulative_versions_dup2
 
   script:
   """
@@ -40,4 +42,7 @@ process step_2_code {
   """
 }
 
-
+step_1_cumulative_versions_dup2
+  .merge(step_2_version)
+  .map{ it[0] + '-' + it[1] }
+  .set( step_2_cumulative_versions )
