@@ -15,7 +15,7 @@ process step_2 {
   """
     file_contents=`cat $file_in`
     sample=`echo "$file_in" | cut -d_ -f1`
-    echo "\$file_contents\nAnd some more stuff" > \${sample}_processed.${prior_versions}-${version}.txt
+    echo "\$file_contents\nAnd some more stuff\nThis change made for fun" > \${sample}_processed.${prior_versions}-${version}.txt
   """
 
 }
