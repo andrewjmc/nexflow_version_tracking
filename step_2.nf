@@ -8,7 +8,7 @@ process step_2 {
     val(prior_versions) from step_1_version
 
   output:
-    file("${sample}_processed.${prior_versions}-${version}.txt") into step_2_output
+    tuple val(sample), file("${sample}_processed.${prior_versions}-${version}.txt") into step_2_output
     val(version) into s2v
 
   script:
