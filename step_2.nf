@@ -32,6 +32,6 @@ process step_2_code {
   script:
   """
     l=`grep -n "^[}]\$" *.nf | head -n1 | cut -d: -f2`
-    sed -i -n "1,${l}p" *.nf
+    sed -i -n "1,\${l}p" *.nf
   """
 }
