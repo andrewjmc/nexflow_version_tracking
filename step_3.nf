@@ -26,7 +26,7 @@ process step_3_code {
 
   input:
     val(version) from step_3_version.first()
-    val(prior_versions) from step_2_cumulative_versions_dup
+    val(prior_versions) from step_2_cumulative_versions_dup.first()
     path "step_3.${version}.nf" from "${workflow.projectDir}/step_3.nf"
     file(prior_code) from step_2_cumulative_code
 
