@@ -168,7 +168,7 @@ process step_4A_code {
   storeDir 'results/step_4A/code'
 
   input:
-    val(version) from step_4_version
+    val(version) from step_4A_version
     val(prior_versions) from step_3_cumulative_versions
     path(code) from "${workflow.projectDir}/step_4A.nf"
     path(prior_code) from step_3_cumulative_code
