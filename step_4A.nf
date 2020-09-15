@@ -3,7 +3,7 @@ process step_4A {
   storeDir 'results/step_4A'
 
   input:
-    file(file_in) from step_3_output_1.map{ it[1] }.collect()
+    file(file_in) from step_3_output.map{ it[1] }.collect()
     val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_4A.nf".execute().text]
     val(prior_versions) from step_3_cumulative_versions
 
