@@ -106,7 +106,7 @@ process step_3 {
     val(prior_versions) from step_2_cumulative_versions
 
   output:
-    tuple val(sample), file("${sample}_processed.${prior_versions}-${version}.txt") into {step_3_output; step_3_output_2}
+    tuple val(sample), file("${sample}_processed.${prior_versions}-${version}.txt") into step_3_output
     val(version) into s3v
 
   script:
@@ -121,6 +121,8 @@ process step_3 {
 s3v
   .first()
   .set{ step_3_version }
+
+step_3_output.into{ step_3_output; step_3_output_2 }
 
 process step_3_code {
   storeDir 'results/step_3/code'
