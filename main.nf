@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-git_status="git --git-dir ${workflow.projectDir} status --porcelain | grep -E '^( M)|(MM)|(\\?\\?)'>/dev/null && echo 'dirty' || echo 'clean'".execute().text
+git_status="${workflow.projectDir}/check_clean.sh".execute().text
 
 if(git_status=~"dirty"){
   throw new Exception("The script directory is dirty. Revert or commit before running.")
