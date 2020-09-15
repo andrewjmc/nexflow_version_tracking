@@ -14,8 +14,7 @@ if(equal=~"inequal"){
 
 branch="${workflow.projectDir}/get_branch.sh".execute().text
 
-println(branch)
-println("^Branch name^")
+println("Branch: " + branch)
 
 if(branch=="master"){
   branch_str=""

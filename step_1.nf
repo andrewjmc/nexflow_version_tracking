@@ -4,7 +4,8 @@ process step_1 {
 
   input:
     tuple val(sample), file(file_in) from files_in
-    val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_1.nf".execute().text]
+    val(version) from branch_str + commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_1.nf".execute().text]
+    val(branch_str) from branch_str
 
   output:
     tuple val(sample), file("${file_in.baseName}_processed.${version}.txt") into step_1_output
@@ -31,6 +32,7 @@ process step_1_code {
     val(process_name) from "step_1"
     val(prior_versions) from ""
     val(prior_code) from ""
+    val(branch_str) from branch_str
 
   output:
     path("step_1.${version}.nf") into step_1_code
