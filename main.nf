@@ -3,7 +3,7 @@
 git_status="git --git-dir ${workflow.projectDir} status --porcelain | grep -E '^( M)|(MM)|(\\?\\?)'>/dev/null && echo 'dirty' || echo 'clean'".execute().text
 
 if(git_status=~"dirty"){
-  throw new Exception("The script directory is dirty. Revert or commit before running!")
+  throw new Exception("The script directory is dirty. Revert or commit before running.")
 }
 
 
