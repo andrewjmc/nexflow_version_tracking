@@ -24,7 +24,7 @@ s3v
   .first()
   .set{ step_3_version }
 
-step_3_output.into{ step_3_output_1, step_3_output_2 }
+step_3_output.into( step_3_output_1, step_3_output_2 )
 
 process step_3_code {
   storeDir 'results/step_3/code'
