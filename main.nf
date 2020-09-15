@@ -3,10 +3,26 @@
 git_status="${workflow.projectDir}/check_clean.sh".execute().text
 
 if(git_status=~"dirty"){
-  throw new Exception("The script directory is dirty. Revert or commit before running.")
+  throw new Exception("The script directory is dirty. Revert or commit before running!")
 }
 
+equal="${workflow.projectDir}/check_equal.sh".execute().text
 
+if(equal=~"inequal"){
+  throw new Exception("main.nf is out-of-sync with individual script files.")
+}
+
+branch="${workflow.projectDir}/get_branch.sh".execute().text
+
+println(branch)
+println("^Branch name^")
+
+if(branch=="master"){
+  branch_str=""
+}
+else{
+  branch_str=branch+"-"
+}
 
 Channel
   .fromPath( "$params.inputDir/*.txt" )
