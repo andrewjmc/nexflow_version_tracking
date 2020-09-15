@@ -3,7 +3,7 @@ process step_4B {
   storeDir 'results/step_4B'
 
   input:
-    tuple val(sample), file(file_in) from step_3_output
+    tuple val(sample), file(file_in) from step_3_output_2
     file(step_4A_file) from step_4A_output
     val(version) from commits["${workflow.projectDir}/get_last_commit_for_file.sh ${workflow.projectDir}/step_4B.nf".execute().text]
     val(prior_versions) from step_4A_cumulative_versions

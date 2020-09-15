@@ -8,7 +8,7 @@ process step_3 {
     val(prior_versions) from step_2_cumulative_versions
 
   output:
-    tuple val(sample), file("${sample}_processed.${prior_versions}-${version}.txt") into step_3_output
+    tuple val(sample), file("${sample}_processed.${prior_versions}-${version}.txt") into {step_3_output, step_3_output_2}
     val(version) into s3v
 
   script:
